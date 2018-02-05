@@ -5,10 +5,14 @@ r = praw.Reddit(client_id='7mGIoZ0ZPzUuGw',
                      user_agent='polsci_test by /u/politics_science')
 
 
+dick = []
 
 subreddit = r.subreddit('nfl')
 for comment in r.subreddit('nfl').stream.comments():
-    print(comment)
+  dick.append = comment
+
+
+
 
 
 
