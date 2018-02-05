@@ -5,11 +5,15 @@ r = praw.Reddit(client_id='7mGIoZ0ZPzUuGw',
                      user_agent='polsci_test by /u/politics_science')
 
 
+
+for submission in r.subreddit('nfl').hot(limit=10):
+    print(submission.title)
+
 dick = []
 
 subreddit = r.subreddit('nfl')
-for comment in r.subreddit('nfl').stream.comments():
-  dick.append = comment
+for comment in r.subreddit('nfl').stream.comments.hot(limit=10):
+  dick.append(comment)
 
 
 
@@ -35,3 +39,5 @@ def getAll(r, submissionId, verbose=True):
   for comment in comments:
     getSubComments(comment, commentsList, verbose=verbose)
   return commentsList
+
+res = getAll(r, "6rjwo1")
