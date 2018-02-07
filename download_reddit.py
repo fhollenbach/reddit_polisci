@@ -1,6 +1,8 @@
 
 import praw
 import time 
+import numpy 
+import pandas
 
 r = praw.Reddit(client_id='7mGIoZ0ZPzUuGw',
                      client_secret=	'E3ATC9jPeHCRuFNbT4pjz7dFwXw',
@@ -17,58 +19,33 @@ for submission in r.subreddit('nfl').hot(limit=10):
 
 
 
-submission.comments.replace_more(limit=None)
 
 all_comments_body = []
 all_comments_author = []
 all_comments_score = []
 all_comments_time = []
+all_comments_upvote = []
 
 for sub in submission_list:
   sub.comments.replace_more(limit=None)
   for comment in sub.comments.list():
-    all_comments_body.append(comment.body)
+    all_comments_body.append(re.sub('[^A-Za-z0-9 ]+', '', comment.body))
     all_comments_author.append(comment.author)
     all_comments_score.append(comment.score)
-    all_comments_time.append()
+    all_comments_time.append(time.gmtime(comment.created_utc))
 
 
 
-for com in all_comments:
+output = pandas.DataFrame(
+    {'author': all_comments_author,
+     'body': all_comments_body,
+     'time': all_comments_time,
+     'score': all_comments_score
+    })
 
-    for submission in subreddit.hot(limit=10):
-    print(submission.title)  # Output: the submission's title
-    
 
-dick = []
-
-subreddit = r.subreddit('nfl')
-for comment in r.subreddit('nfl').stream.comments.hot(limit=10):
-  dick.append(comment)
-
+output.to_csv('/Users/florianhollenbach/Dropbox/RedditData/test.csv', index=False, header=False)
+print output
 
 
 
-
-
-
-def getSubComments(comment, allComments, verbose=True):
-  allComments.append(comment)
-  if not hasattr(comment, "replies"):
-    replies = comment.comments()
-    if verbose: print("fetching (" + str(len(allComments)) + " comments fetched total)")
-  else:
-    replies = comment.replies
-  for child in replies:
-    getSubComments(child, allComments, verbose=verbose)
-
-
-def getAll(r, submissionId, verbose=True):
-  submission = r.submission(submissionId)
-  comments = submission.comments
-  commentsList = []
-  for comment in comments:
-    getSubComments(comment, commentsList, verbose=verbose)
-  return commentsList
-
-res = getAll(r, "6rjwo1")
