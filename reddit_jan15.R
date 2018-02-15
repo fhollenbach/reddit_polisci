@@ -34,5 +34,7 @@ reddit_data <- separate(reddit_data, col = date, into = c("date", "time"), sep =
 reddit_data <- separate(reddit_data, col = date, into = c("year", "month", "day"), sep = "-", remove = TRUE)
 reddit_data <- separate(reddit_data, col = time, into = c("hour", "minute", "second"), sep = ":", remove = TRUE)
 
+## Generating linenumbers
+reddit_data <- reddit_data %>% mutate(linenumber = row_number())
 
 export(reddit_data, "jan2015.Rdata")
