@@ -24,6 +24,7 @@ library(stringr)
 library(tidytext)
 library(tidyr)
 library(ggplot2)
+library(anytime)
 
 ##--------------------------------------------------
 ## Loading the data set
@@ -32,7 +33,7 @@ reddit_data <- import("test.csv")
 ## Renaming the columns 
 ## word is default column for lots of What's V3?
 reddit_data <- reddit_data %>% rename(user = V1, comment = V2, date = V4)
-                               
+
 ## Generating linenumbers
 reddit_data <- reddit_data %>% mutate(linenumber = row_number())
 
@@ -87,3 +88,4 @@ bind_rows(afinn,
   ggplot(aes(index, sentiment, fill = method)) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~method, ncol = 1, scales = "free_y")
+
