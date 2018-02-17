@@ -1,14 +1,18 @@
 
-
-library(rjson)
-library(dplyr)
+library(anytime)
+library(jsonlite)
 library(tidytext)
-raw_data<-('~/Dropbox/RedditData/data2015000000000000.json')
 
-con = file(raw_data, "r")
-input <- readLines(con, -1L)
-dat <- lapply(X=input,fromJSON)
-
-
-test <- dat[1:10]
-save(test, file = "~/Dropbox/RedditData/test.rda")
+data <- data.frame()
+num <- c(0,1,2)
+for(i in num){
+  raw_data<-paste("~/Dropbox/RedditData/data201500000000000",i,".json",sep = "")
+  res <- fromJSON(sprintf("[%s]", paste(readLines(raw_data),collapse=",")))
+  
+  
+  res$date <- as.Date(anytime(res$created_utc))
+  res$year <- format(res$date, "%Y")
+  res$month <- format(res$date, "%m")
+  data <- res  %>% select(body, author,  month, year) %>% bind_rows(data)
+  
+}

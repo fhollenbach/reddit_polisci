@@ -4,7 +4,7 @@ library(dplyr)
 library(tidytext)
 months <- c("01","02","03","04","05","06","07","08","09","10","11","12")
 
-load("~/Dropbox/RedditData/Downloads/nflsubreddit_2016_01_.rda")
+load("~/Dropbox/RedditData/Downloads/politicssubreddit_2016_01_.rda")
 res$date <- as.Date(anytime(res$created_utc))
 res$year <- format(res$date, "%Y")
 res$month <- format(res$date, "%m")
@@ -95,4 +95,4 @@ sentiment_plot2016 <- bind_rows(afinn,
   geom_col(show.legend = FALSE) +
   facet_wrap(~method, ncol = 1, scales = "free_y")
 plot(sentiment_plot2016)
-ggsave("~/Dropbox/RedditData/sentiment2016.pdf")
+ggsave("~/Dropbox/RedditData/sentiment2016_politics.pdf")
