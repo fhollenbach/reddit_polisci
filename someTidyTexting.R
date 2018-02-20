@@ -2,23 +2,8 @@
 library(anytime)
 library(dplyr)
 library(tidytext)
-months <- c("01","02","03","04","05","06","07","08","09","10","11","12")
 
-load("~/Dropbox/RedditData/Downloads/politicssubreddit_2016_01_.rda")
-res$date <- as.Date(anytime(res$created_utc))
-res$year <- format(res$date, "%Y")
-res$month <- format(res$date, "%m")
-data <- res %>% select(body, author,  month, year)      
-
-
-for(i in months[-1]){
-  load(paste("~/Dropbox/RedditData/Downloads/nflsubreddit_2016_",i,"_.rda", sep = ""))
-  res$date <- as.Date(anytime(res$created_utc))
-  res$year <- format(res$date, "%Y")
-  res$month <- format(res$date, "%m")
-  
-  data <- res  %>% select(body, author,  month, year) %>% bind_rows(data)
-}
+load("~/Dropbox/RedditData/nfl_2016.rda")
 
 
 data <- data %>% mutate(linenumber = row_number())
@@ -27,8 +12,15 @@ data <- data %>% mutate(linenumber = row_number())
 
 text_df <- data %>% group_by(author)
 
+text_df <- text_df   %>% mutate(body = iconv(body, to = 'latin1'))
 
-text_df <- text_df %>% mutate(linenumber = row_number()) %>% ungroup() %>% unnest_tokens(word, body)
+text_df <- text_df   %>% filter(body!="[deleted]")
+
+text_df <- text_df %>% ungroup() %>% unnest_tokens(word, body, token = "lines")
+
+
+
+
 
 data(stop_words)
 
@@ -52,10 +44,18 @@ plot <- text_df %>%
   geom_col() +
   xlab(NULL) +
   coord_flip()
-
-
+plot(plot)
+ggsave("~/Dropbox/RedditData/commonComments.pdf")
 
 ## Sentiment based on Bing et al
+
+## Sentiment based on Bing et al
+redditsentiment <- text_df %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(author, index = linenumber%/% 4, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(sentiment = positive - negative)
+
 redditsentiment <- text_df %>%
   inner_join(get_sentiments("bing")) %>%
   count(author, index = month, sentiment) %>%
@@ -95,4 +95,4 @@ sentiment_plot2016 <- bind_rows(afinn,
   geom_col(show.legend = FALSE) +
   facet_wrap(~method, ncol = 1, scales = "free_y")
 plot(sentiment_plot2016)
-ggsave("~/Dropbox/RedditData/sentiment2016_politics.pdf")
+ggsave("~/Dropbox/RedditData/sentiment2016.pdf")
