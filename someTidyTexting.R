@@ -3,7 +3,7 @@ library(anytime)
 library(dplyr)
 library(tidytext)
 
-load("~/Dropbox/RedditData/nfl_2016.rda")
+load("~/Dropbox/RedditData/politics_2016.rda")
 
 
 data <- data %>% mutate(linenumber = row_number())
@@ -16,7 +16,7 @@ text_df <- text_df   %>% mutate(body = iconv(body, to = 'latin1'))
 
 text_df <- text_df   %>% filter(body!="[deleted]")
 
-text_df <- text_df %>% ungroup() %>% unnest_tokens(word, body, token = "lines")
+text_df <- text_df %>% ungroup() %>% unnest_tokens(word, body, token = "words")
 
 
 
@@ -45,7 +45,7 @@ plot <- text_df %>%
   xlab(NULL) +
   coord_flip()
 plot(plot)
-ggsave("~/Dropbox/RedditData/commonComments.pdf")
+ggsave("~/Dropbox/RedditData/pol_commonComments.pdf")
 
 ## Sentiment based on Bing et al
 
@@ -95,4 +95,4 @@ sentiment_plot2016 <- bind_rows(afinn,
   geom_col(show.legend = FALSE) +
   facet_wrap(~method, ncol = 1, scales = "free_y")
 plot(sentiment_plot2016)
-ggsave("~/Dropbox/RedditData/sentiment2016.pdf")
+ggsave("~/Dropbox/RedditData/pol_sentiment2016.pdf")
